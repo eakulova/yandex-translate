@@ -6,21 +6,21 @@ import java.util.Properties;
 
 public class ConfigParser {
     private static final String FILE_NAME = "config.properties";
-    private static final String DEFAULT_LANGUAGE = "ru";
+    private static final String DEFAULT_LANGUAGE = "en-ru";
     private String key;
     private String destLang;
-    private ConfigParser configParser;
+    private static ConfigParser configParser;
 
     private ConfigParser() {
         try {
             loadProperties();
         } catch (EmptyKeyException ex) {
             ex.printStackTrace();
-            System.exit(1);
+            throw new RuntimeException();
         }
     }
 
-    public ConfigParser getConfigParser() {
+    public static ConfigParser getConfigParser() {
         if (configParser == null) {
             configParser = new ConfigParser();
         }
@@ -29,7 +29,7 @@ public class ConfigParser {
 
     public void loadProperties() {
         Properties appProps = getProperties();
-        destLang = appProps.getProperty("destination_language", DEFAULT_LANGUAGE);
+        destLang = appProps.getProperty("from_to_lang", DEFAULT_LANGUAGE);
         key = appProps.getProperty("key");
         if (key == null) {
             throw new EmptyKeyException();
@@ -40,7 +40,7 @@ public class ConfigParser {
         return key;
     }
 
-    public String getDefaultLang() {
+    public String getDestinationLang() {
         return destLang;
     }
 
@@ -51,7 +51,7 @@ public class ConfigParser {
             appProps.load(new FileInputStream(configPath));
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.exit(1);
+            throw new RuntimeException();
         }
         return appProps;
     }
